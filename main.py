@@ -32,19 +32,29 @@ def convert_to_docx(path):
     os.remove(path)
 
 
+def clean_excel():
+    wb = load_workbook('Preços de  03 a 09  de agosto de 2021 (1).xlsm', keep_vba=True)
+    ws = wb['Preços']
+    for j in range(8, 28):
+        for k in range(1, 15):
+            ws.cell(row=j, column=k + 1).value = None
+    wb.save('Preços de  03 a 09  de agosto de 2021 (1).xlsm')
+
+
 def main(dir):
     current_dir = os.getcwd()
 
     for r, d, f in os.walk(dir):
         for file in f:
             if ".docx" in file:
-                doc = Document(os.path.join(r, file).split('/', 1)[1])
-                city = get_city_name(doc)
-                full_path = os.path.join(os.path.realpath(r), file)
-                rename_dir(current_dir, city, full_path)
-                doc = Document(city+'.docx')
+                #doc = Document(os.path.join(r, file).split('/', 1)[1])
+                #city = get_city_name(doc)
+                #full_path = os.path.join(os.path.realpath(r), file)
+                #rename_dir(current_dir, city, full_path)
+                doc = Document(file)
+                print(file)
                 data = read_table(doc)
-                write_excel(data, city)
+                write_excel(data, file.replace('.docx', ''))
 
 
 def get_city_name(doc):
@@ -128,7 +138,6 @@ def is_numeric(s):
 def write_excel(data, city):
     wb = load_workbook('Preços de  03 a 09  de agosto de 2021 (1).xlsm', keep_vba=True)
     ws = wb['Preços']
-    print(city)
     for j in range(8, 28):
         if ws.cell(row=j, column=1).value == city:
             for i in range(1, 15):
@@ -139,5 +148,6 @@ def write_excel(data, city):
 
 # Start point
 directory = './'
-doc_to_docx(directory)
+#doc_to_docx(directory)
+clean_excel()
 main(directory)
